@@ -1,0 +1,52 @@
+{% extends 'contactbook/layout.html' %}
+
+{% block content %}
+<div class="container">
+<h3>Rolodex Contact Book</h3>
+
+
+<form method="POST">
+{% csrf_token %}
+
+{% if form.errors %}
+	<div id="errors">
+		<div class="inner">
+			<p>There were some errors in the information you entered. Please correct the following:</p>
+			<ul>
+				{% for field in form %}
+					{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+{{form.as_p}}
+<button type="submit" class="btn btn-primary my-3">Add Contact</button>
+
+</form>
+
+<div>
+    <h4>Contacts</h4>
+    <ul>
+    {% for contact in contacts %}
+
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                Name: <a href="{% url 'contactbook_show_page' contact.id%}">{{contact.name | capfirst}}</a>
+                <a href="{% url 'contactbook_show_page' contact.id%}?edit=true">Edit Contact</a>
+                Description: {{contact.description | truncatewords:"2"}}
+                <form method="POST" action="{% url 'contactbook_show_page' contact.id %}?delete=true">
+                {% csrf_token %}
+                    <button type="submit">Delete Todo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    </ul>
+</div>
+
+</div>
+{% endblock content %}
